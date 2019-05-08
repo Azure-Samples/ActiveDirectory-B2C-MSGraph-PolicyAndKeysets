@@ -1,6 +1,6 @@
-# Project Name
+# Programmatic access to Custom Policies and Keysets
 
-(short, 1-3 sentenced, description of the project)
+Programmatically access [Custom Policies](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta) and Keysets (In Private Preview)
 
 ## Features
 
@@ -50,8 +50,6 @@ To run the demo, follow these steps:
 
 ## Resources
 
-(Any additional resources or related projects)
 
-- Link to supporting information
-- Link to similar sample
+- [Custom Policies](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta)
 - ...
