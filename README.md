@@ -36,20 +36,21 @@ This sample requires the following:
 #### Register the delegated permissions application
 
 1. Sign in to the [Application Registration Portal](https://apps.dev.microsoft.com/) using your Microsoft account.
-1. Select **Add an app**, and enter a friendly name for the application (such as **Console App for Microsoft Graph (Delegated perms)**). Click **Create**.
-1. On the application registration page, select **Add Platform**. Select the **Native App** tile and save your change. The **delegated permissions** operations in this sample use permissions that are specified in the AuthenticationHelper.cs file. This is why you don't need to assign any permissions to the app on this page.
-1. Open the solution and then the Constants.cs file in Visual Studio. 
-1. Make the **Application Id** value for this app the value of the **ClientIdForUserAuthn** string.
-1. Update **Tenant** with the name of your tenant.  (for example: myb2ctenantname.onmicrosoft.com)
+2. Select **Add an app**, and enter a friendly name for the application (such as **Console App for Microsoft Graph (Delegated perms)**). Click **Create**.
+3. On the application registration page, select **Add Platform**. Select the **Native App** tile and save your change. The **delegated permissions** operations in this sample use permissions that are specified in the AuthenticationHelper.cs file. This is why you don't need to assign any permissions to the app on this page.
+4. Open the project PolicyAndKeys-Client and then update App.Config file in Visual Studio with the following. 
+5. Make the **Application Id** value for this app the value of the **ida:ClientId** string.
+6. Update **ida:Tenant** with the name of your tenant.  (for example: myb2ctenantname.onmicrosoft.com)
 
 #### Build and run the sample
 
 1. Open the sample solution in Visual Studio.
-1. Replace the tenant name and application id in Constants.cs by following [Register the delegated permissions application](#register-the-delegated-permissions-application)
-1. Build the sample.
-1. Using cmd or PowerShell, navigate to <Path to sample code>/bin/Debug. Run the executable **B2CPolicyClient.exe**.
-1. Sign in as a global administrator.  (for example: admin@myb2ctenant.onmicrosoft.com)
-1. The output will show the results of calling the Graph API for trustFrameworkPolices.
+2. There are 2 projects - PolicyAndKeys-Client and PolicyAndKeys-Lib. 
+3. In the PolicyAndKeys-Client project, Make sure to Replace the tenant name and ClientId in app.config by following [Register the delegated permissions application](#register-the-delegated-permissions-application)
+4. Build the sample.
+5. Using cmd or PowerShell, navigate to <Path to sample code>/bin/Debug. Run the client executable **PolicyAndKeys-Client.exe**.
+6. Sign in as a global administrator.  (for example: admin@myb2ctenant.onmicrosoft.com)
+7. The output will show the results of calling the Graph API for trustFrameworkPolices.
 
 ## Questions and comments
 
