@@ -24,19 +24,18 @@ namespace AADB2C.PolicyAndKeys.Client
         // Your tenant Name, for example "myb2ctenant.onmicrosoft.com"
         public static string Tenant = "ENTER_YOUR_TENANT_NAME";
 
-
         static CommandType cmdType = CommandType.EXIT;
         static ResourceType resType = ResourceType.POLICIES;
         static UserMode userMode;
 
-        static string TestKeysetID = null;
-
         public static bool LastCommand { get; private set; }
+
+        private static TestRequests testRequests;
 
         static void Main(string[] args)
         {
             // validate parameters
-            
+
             var appSettings = ConfigurationManager.AppSettings;
             ClientIdForUserAuthn = appSettings["ida:ClientId"];
             Tenant = appSettings["ida:Tenant"];
@@ -52,59 +51,81 @@ namespace AADB2C.PolicyAndKeys.Client
             {
                 // Login as global admin of the Azure AD B2C tenant
                 authHelper.LoginAsAdmin();
+
                 // Graph client does not yet support trustFrameworkPolicy, so using HttpClient to make rest calls
                 userMode = new UserMode(authHelper.TokenForUser);
 
                 do
                 {
-                    LastCommand = false;   
+                    //content is the the request body
+                    string cont = string.Empty;
+                    //last command is only meant to ensure that this is not the first time.
+                    LastCommand = false;
+                    //Get resource from console
                     resType = ProcessResourceInput();
+                    //set resource for request to be constructed.
                     userMode.SetResouce(resType);
-
+                    //Get Command from console
                     cmdType = ProcessCommandInput();
+                    //initialize test request
+                    testRequests = new TestRequests(userMode, resType, cmdType);
                     switch (cmdType)
                     {
                         case CommandType.LIST:
 
                             // List all polcies using "GET /trustFrameworkPolicies"
-                            PrintInfo("");
                             request = userMode.HttpGet();
+                            ExecuteResponse(request);
                             break;
                         case CommandType.GET:
                             // Get a specific policy using "GET /trustFrameworkPolicies/{id}"
                             args = ProcessParametersInput();
-                            PrintInfo("", args[0]);
-                            request = userMode.HttpGetID(args[1]);
+                            testRequests.CheckAndGenerateTest(ref args[0], ref cont);
+
+                            request = userMode.HttpGetID(args[0]);
+                            ExecuteResponse(request);
+
                             break;
                         case CommandType.CREATE:
                             // Create a policy using "POST /trustFrameworkPolicies" with XML in the body
                             args = ProcessParametersInput();
 
-                            string cont = System.IO.File.ReadAllText(args[0]);
-                            PrintInfo("", args[0]);
-                            request = userMode.HttpPost(cont);
+                            if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
+                            {
+                                cont = System.IO.File.ReadAllText(args[0]);
+                                request = userMode.HttpPost(cont);
+                                ExecuteResponse(request);
+                            }
+
+
                             break;
                         case CommandType.UPDATE:
                             // Update using "PUT /trustFrameworkPolicies/{id}" with XML in the body
                             args = ProcessParametersInput();
-                            cont = System.IO.File.ReadAllText(args[1]);
-                            PrintInfo("", args[0], args[1]);
+
+                            if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
+                            {
+                                cont = System.IO.File.ReadAllText(args[1]);
+                            }
                             request = userMode.HttpPutID(args[0], cont);
+                            ExecuteResponse(request);
                             break;
                         case CommandType.DELETE:
                             // Delete using "DELETE /trustFrameworkPolicies/{id}"
                             args = ProcessParametersInput();
 
-                            PrintInfo("", args[0]);
+                            testRequests.CheckAndGenerateTest(ref args[0], ref cont);
+
                             request = userMode.HttpDeleteID(args[0]);
+                            ExecuteResponse(request);
                             break;
 
                         case CommandType.BACKUPKEYSETS:
                         case CommandType.GETACTIVEKEY:
                             args = ProcessParametersInput();
 
-                            PrintInfo("", args[0]);
                             request = userMode.HttpGetByCommandType(cmdType, args[0]);
+                            ExecuteResponse(request);
                             break;
 
                         case CommandType.GENERATEKEY:
@@ -112,23 +133,23 @@ namespace AADB2C.PolicyAndKeys.Client
                         case CommandType.UPLOADPKCS:
                         case CommandType.UPLOADSECRET:
                             args = ProcessParametersInput();
-                            var id = args[0];
-                            PrintInfo("", id);
+
 
                             cont = args.Length == 1 ? string.Empty : args[1];
-                            if (!CheckAndGenerateTest(ref id, ref cont))
+                            if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                if (cont.Contains(Path.DirectorySeparatorChar))
-                                    cont = File.ReadAllText(args[1]);
+                                cont = File.ReadAllText(args[1]);
                             }
-                            request = userMode.HttpPostByCommandType(cmdType, id, cont);
+                            request = userMode.HttpPostByCommandType(cmdType, args[0], cont);
+                            ExecuteResponse(request);
                             break;
                         case CommandType.EXIT:
+
                             CheckLastCommandAndExitApp();
                             break;
                     }
 
-                    ExecuteResponse(request);
+
 
                 } while (cmdType != CommandType.EXIT);
 
@@ -137,104 +158,6 @@ namespace AADB2C.PolicyAndKeys.Client
             {
                 Print(request);
                 Console.WriteLine("\nError {0} {1}", e.Message, e.InnerException != null ? e.InnerException.Message : "");
-            }
-        }
-
-        private static string ExecuteResponse(HttpRequestMessage request)
-        {
-            Print(request);
-
-            HttpClient httpClient = new HttpClient();
-            Task<HttpResponseMessage> response = httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-            
-            return Print(response);
-        }
-
-        private static bool CheckAndGenerateTest(ref string id, ref string content)
-        {
-            if (id.ToUpper() == TESTPARAMETER)
-            {
-                switch (cmdType)
-                {
-                    case CommandType.GENERATEKEY:
-                        
-                        content = Constants.GenerateKey;
-                        break;
-                    case CommandType.UPDATE:
-                        content= Constants.UpdateOctKeyset;
-
-                        
-                        break;
-                    case CommandType.UPLOADCERTIFICATE:
-                        
-                        content = Constants.UploadCertificate;
-                        break;
-
-                    case CommandType.UPLOADPKCS:
-                        content = Constants.UploadPkcs;
-                        break;
-
-                    case CommandType.UPLOADSECRET:
-                        
-                        content = Constants.UploadSecret;
-
-                        break;
-                }
-                CheckBeforeCreateTestKeyset();
-                //id is used in the post/get commands.
-                id = TestKeysetID;
-                ReplaceTokens(ref content);
-                return true;
-            }
-            return false;
-        }
-
-        private static void ReplaceTokens(ref string s)
-        {
-            var reg = new Regex(@"#\w+#");
-            var mc = reg.Matches(s);
-
-            foreach (Match match in mc)
-            {
-                foreach (Capture capture in match.Captures)
-                {
-                    var matched = capture.Value;
-
-                    if (matched == Constants.SECRET_TOKEN)
-                    {
-                        
-                        s = reg.Replace(s, Guid.NewGuid().ToString(), 1);
-                    }
-                    if (matched == Constants.KEYSETID_TOKEN)
-                    {
-                        s = reg.Replace(s, TestKeysetID, 1);
-                    }
-                    if (matched == Constants.NBF_TOKEN)
-                    {
-                        var nbf = ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
-                        s = reg.Replace(s, $"{nbf}", 1);
-                    }
-                    if (matched == Constants.EXP_TOKEN)
-                    {
-                        var exp = ((DateTimeOffset)new DateTime(2035, 1, 1)).ToUnixTimeSeconds();
-                        s = reg.Replace(s, $"{exp}", 1);
-                    }
-                }
-            }
-
-        }
-        
-        private static void CheckBeforeCreateTestKeyset()
-        {
-            if (TestKeysetID == null)
-            {
-                var json = Constants.CreateKeyset;
-                var guid = Guid.NewGuid().ToString();
-                
-                ReplaceTokens(ref json);
-                var req = userMode.HttpPost(json);
-                var content = ExecuteResponse(req);
-                TestKeysetID = (string) JToken.Parse(content).SelectToken("id");
             }
         }
 
@@ -330,6 +253,21 @@ namespace AADB2C.PolicyAndKeys.Client
             return resType;
         }
 
+        private static string ExecuteResponse(HttpRequestMessage request)
+        {
+            Print(request);
+            if (request.Content != null)
+            {
+                string content = request.Content.ReadAsStringAsync().Result ?? string.Empty;
+                PrintInfo(content);
+            }
+
+            HttpClient httpClient = new HttpClient();
+            Task<HttpResponseMessage> response = httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+
+            return Print(response);
+        }
+
         public static bool CheckConfiguration(string[] args)
         {
             if (ClientIdForUserAuthn.Equals("ENTER_YOUR_CLIENT_ID") ||
@@ -391,12 +329,14 @@ namespace AADB2C.PolicyAndKeys.Client
             if (LastCommand && cmdType == CommandType.EXIT)
             {
                 LastCommand = true;
+                Console.WriteLine("Enter any character or simply enter to exit");
+                Console.ReadKey();
                 Console.WriteLine("bye bye...");
                 Environment.Exit(0);
 
             }
         }
 
-        
+
     }
 }

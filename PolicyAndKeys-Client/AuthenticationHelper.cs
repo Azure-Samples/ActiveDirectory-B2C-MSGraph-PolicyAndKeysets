@@ -32,6 +32,7 @@ namespace AADB2C.PolicyAndKeys.Client
                 .WithAuthority(AADAuthority)
                 .WithRedirectUri($"msal{ClientId}://auth")
                 .Build();
+            TokenCacheHelper.EnableSerialization(IdentityClientApp.UserTokenCache);
         }
 
         public string LoginAsAdmin()
@@ -139,7 +140,7 @@ namespace AADB2C.PolicyAndKeys.Client
                 {
                     try
                     {
-                        var r = IdentityClientApp.AcquireTokenInteractive(Scopes, null)
+                        var r = IdentityClientApp.AcquireTokenInteractive(Scopes)
                             .WithPrompt(Prompt.SelectAccount);
                         authResult = await r.ExecuteAsync();
                         TokenForUser = authResult.AccessToken;

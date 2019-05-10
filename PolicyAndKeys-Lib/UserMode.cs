@@ -57,7 +57,7 @@ namespace AADB2C.PolicyAndKeys.Lib
         {
             resourceType = resource.ToString().ToLower();
             TFUri = $"https://graph.microsoft.com/beta/trustFramework/{resourceType}";
-            TFByIDUri = $"https://graph.microsoft.com/beta/trustFramework/{resourceType}/{0}";
+            TFByIDUri = $"https://graph.microsoft.com/beta/trustFramework/{resourceType}/" + "{0}";
             if (resource == ResourceType.POLICIES)
                 TFByIDUri = TFByIDUri + "/$value";
             if (resource == ResourceType.KEYSETS)
