@@ -4,7 +4,7 @@
 [!NOTE] Keysets programmatic access is in private preview. To get access for trying out this feature, please send a email to aadb2cpreview@microsoft.com with your tenant name that you want enabled.
 
 
-Programmatically access [Custom Policies](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta) and [Keysets] (https://github.com/Azure-Samples/ActiveDirectory-B2C-MSGraph-PolicyAndKeysets/Keyset-API-Documentation.md) is in Private Preview. 
+Programmatically access [Custom Policies](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta) and [Keysets](https://github.com/Azure-Samples/ActiveDirectory-B2C-MSGraph-PolicyAndKeysets/blob/master/Keyset-API-Documentation.md) is in Private Preview. 
 
 This is a sample command line tool that demonstrates managing custom trust framework policies (custom policy for short) and Policy keys in an Azure AD B2C tenant.  [Custom policy](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-overview-custom) allows you to customize every aspect of the authentication flow. Azure AD B2C uses [Policy keys](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-get-started-custom#create-the-encryption-key) to manage your secrets.
 
