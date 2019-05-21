@@ -46,7 +46,7 @@ A trustFrameworkKey is equivalent to a JWK(JSON Web Key). TrustFrameworkKey is a
 ## Permissions
 
 | **Scope** | **Permission** | **Description** |
-|---|---|---|---|---|
+|---|---|---|
 | TrustFrameworkKeySet.Read.All | Read all the TrustFrameworkKeySets in Tenant. |
 | TrustFrameworkKeySet.ReadWrite.All | Read and Write all the TrustFrameworkKeySets in Tenant. |
 
@@ -69,7 +69,7 @@ This api can be used to generate a key and a secret automatically in the keyset.
 ##### Parameters
 
 |Parameter|Type|Required?|Description|
-|-|-|-|-|-|
+|-|-|-|-|
 | `use` | string | Yes | similar to 'use' property of trustFrameworkKey mentioned above. |
 | `kty` | string | Yes | similar to 'kty' property of trustFrameworkKey mentioned above. |
 | `nbf` | int | No | similar to 'nbf' property of trustFrameworkKey mentioned above. |
@@ -99,7 +99,7 @@ This action can be used to upload a secret to a key set.
 ##### Parameters
 
 |Parameter|Type|Required?|Description|
-|-|-|-|-|-|
+|-|-|-|-|
 | `use` | string | Yes | similar to 'use' property of trustFrameworkKey mentioned above. |
 | `k` | string | No | similar to 'k' property of trustFrameworkKey mentioned above. This is the field which caller will use to send `secret`.  |
 | `nbf` | int | No | similar to 'nbf' property of trustFrameworkKey mentioned above. |
@@ -129,7 +129,7 @@ This action can be used to upload a certificate to a key set.
 ##### Parameters
 
 |Parameter|Type|Required?|Description|
-|-|-|-|-|-|
+|-|-|-|-|
 | `key` | string | No |  This is the field for sending certificate content.  |
 
 ##### Returns
@@ -153,7 +153,7 @@ This action can be used to upload a PKCS 12 format key (PFX) to a key set.
 ##### Parameters
 
 |Parameter|Type|Required?|Description|
-|-|-|-|-|-|
+|-|-|-|-|
 | `key` | string | No |  This is the field for sending pfx content.  |
 | `password` | string | No |  This is the field for sending password to pfx content.  |
 
