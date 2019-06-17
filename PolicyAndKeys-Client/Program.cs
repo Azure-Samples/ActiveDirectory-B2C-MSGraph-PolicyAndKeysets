@@ -92,7 +92,7 @@ namespace AADB2C.PolicyAndKeys.Client
 
                             if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                cont = System.IO.File.ReadAllText(args[0]);
+                                cont = System.IO.File.ReadAllText(args[0].Replace("\"", ""));
                                 request = userMode.HttpPost(cont);
                                 ExecuteResponse(request);
                             }
@@ -105,7 +105,7 @@ namespace AADB2C.PolicyAndKeys.Client
 
                             if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                cont = System.IO.File.ReadAllText(args[1]);
+                                cont = System.IO.File.ReadAllText(args[1].Replace("\"", ""));
                             }
                             request = userMode.HttpPutID(args[0], cont);
                             ExecuteResponse(request);
@@ -138,7 +138,8 @@ namespace AADB2C.PolicyAndKeys.Client
                             cont = args.Length == 1 ? string.Empty : args[1];
                             if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                cont = File.ReadAllText(args[1]);
+                                testRequests.GenerateKeySetID(ref args[0]);
+                                cont = File.ReadAllText(args[1].Replace("\"", ""));
                             }
                             request = userMode.HttpPostByCommandType(cmdType, args[0], cont);
                             ExecuteResponse(request);
@@ -203,7 +204,7 @@ namespace AADB2C.PolicyAndKeys.Client
             }
 
 
-            var parsArray = pars.Split(' ');
+            var parsArray = Regex.Split(pars, "\\s(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
             parameters = new List<string>(parsArray);
             if ((cmdType == CommandType.UPDATE && parameters.Count != 2) || parameters.Any(string.Empty.Contains))
             {
@@ -310,7 +311,15 @@ namespace AADB2C.PolicyAndKeys.Client
 
             Console.WriteLine(response.Headers);
             string taskContentString = response.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(taskContentString);
+            try
+            {
+                Console.WriteLine(JValue.Parse(taskContentString).ToString(Formatting.Indented));
+            }
+            catch
+            {
+                Console.WriteLine(taskContentString);
+            }
+            
             return taskContentString;
         }
 
