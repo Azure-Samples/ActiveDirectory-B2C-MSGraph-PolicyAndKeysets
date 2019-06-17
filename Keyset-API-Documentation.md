@@ -321,36 +321,6 @@ Delete https://graph.microsoft.com/beta/trustFramework/keySets/{id}
 HTTP/1.1 204 No Content
 ```
 
-#### Use case:  List backed up trustFrameworkKeySets
-
-**Request**
-```http
-GET https://graph.microsoft.com/beta/trustFramework/backupKeySets
-```
-
-**Response**
-```http
-HTTP/1.1 200 OK
-Content-type: application/json
-{
-	"value": [{
-			"id": "B2C_1A_keyset1.bak",
-			"originalId": "B2C_1A_keyset1",
-			"keys": [{
-					"kid": "keyId",
-					"use": "sig",
-					"kty": "RSA",
-					"e": "sjdn",
-					"n": "sldssmdnsdlfmsl"
-				}
-			]
-
-		}
-	]
-}
-
-```
-
 #### Use case:  Generate a Key in the Key Set
 
 **Request**
