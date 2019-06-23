@@ -28,13 +28,13 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         //specific key related APIS
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadSecret {  "use": "sig",  "k": "sdkalsdasdlasdlvasdasdbvlabdlv",  "nbf": "1508969811",  "exp": "1508973711", } 
-        public static string TFKeysetsUploadSecret = "https://graph.microsoft.com/beta/trustframework/keysets/{0}/uploadSecret";
+        public static string TFKeysetsUploadSecret = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/uploadSecret";
 
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadCertificate {  "key": "sdkalsdasdlasdlvasdasdbvlabdlv" }
-        public static string TFKeysetsUploadCertificate = "https://graph.microsoft.com/beta/trustframework/keysets/{0}/uploadCertificate";
+        public static string TFKeysetsUploadCertificate = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/uploadCertificate";
 
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadPkcs12 {  "key": "sdkalsdasdlasdlvasdasdbvlabdlv",   "password": "skdjskdj" } 
-        public static string TFKeysetsUploadPkcs12 = "https://graph.microsoft.com/beta/trustframework/keysets/{0}/uploadPkcs12";
+        public static string TFKeysetsUploadPkcs12 = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/uploadPkcs12";
 
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/generateKey {  "use": "sig",  "kty": "RSA",  "nbf": "1508969811",  "exp": "1508973711", } 
         public static string TFKeysetGenerateKey = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/generateKey";
