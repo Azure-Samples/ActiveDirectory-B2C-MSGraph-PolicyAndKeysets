@@ -42,7 +42,7 @@ namespace AADB2C.PolicyAndKeys.Lib
                             'use': 'sig',  'kty': 'RSA',  'nbf': {0},  'exp': {1}
                             }} ";
 
-        public static string UploadSecret = @"{{  'use': 'sig',  'k': '{0}',  'nbf': {0},  'exp': {1} }} ";
+        public static string UploadSecret = @"{{  'use': 'sig',  'k': '{0}',  'nbf': {1},  'exp': {2} }} ";
 
         public static string UploadCertificate = @"{{  'key': '{0}' }} ";
 

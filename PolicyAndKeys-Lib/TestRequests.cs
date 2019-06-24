@@ -153,5 +153,33 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         }
 
+        public void GenerateKeySetID(ref string id)
+        {
+            var json = Constants.CreateKeyset;
+
+            json = json.Replace(Constants.KEYSETID_TOKEN, id);
+            var req = usrMode.HttpPost(json);
+            var content = ExecuteResponse(req);
+            var result = JToken.Parse(content);
+
+            var keySetId = (string)result.SelectToken("id");
+
+            if (keySetId is null)
+            {
+                var errorCode = (string)result.SelectToken("error.code");
+                if (errorCode == "AADB2C95028")
+                {
+                    // KeySet is already exists. Manually returning key by appending B2C_1A_
+                    keySetId = "B2C_1A_" + id;
+
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Key Set with KeyID {keySetId} already exists and Graph API use existing key set id to add keys.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            }
+
+            id = keySetId;
+        }
+
     }
 }

@@ -24,7 +24,7 @@ namespace AADB2C.PolicyAndKeys.Client
         // Your tenant Name, for example "myb2ctenant.onmicrosoft.com"
         public static string Tenant = "ENTER_YOUR_TENANT_NAME";
 
-        static CommandType cmdType = CommandType.EXIT;
+        static CommandType cmdType;
         static ResourceType resType = ResourceType.POLICIES;
         static UserMode userMode;
 
@@ -66,7 +66,9 @@ namespace AADB2C.PolicyAndKeys.Client
                     //set resource for request to be constructed.
                     userMode.SetResouce(resType);
                     //Get Command from console
+
                     cmdType = ProcessCommandInput();
+                    
                     //initialize test request
                     testRequests = new TestRequests(userMode, resType, cmdType);
                     switch (cmdType)
@@ -92,7 +94,7 @@ namespace AADB2C.PolicyAndKeys.Client
 
                             if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                cont = System.IO.File.ReadAllText(args[0]);
+                                cont = System.IO.File.ReadAllText(args[0].Replace("\"", ""));
                                 request = userMode.HttpPost(cont);
                                 ExecuteResponse(request);
                             }
@@ -105,7 +107,7 @@ namespace AADB2C.PolicyAndKeys.Client
 
                             if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                cont = System.IO.File.ReadAllText(args[1]);
+                                cont = System.IO.File.ReadAllText(args[1].Replace("\"", ""));
                             }
                             request = userMode.HttpPutID(args[0], cont);
                             ExecuteResponse(request);
@@ -138,13 +140,15 @@ namespace AADB2C.PolicyAndKeys.Client
                             cont = args.Length == 1 ? string.Empty : args[1];
                             if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                cont = File.ReadAllText(args[1]);
+                                testRequests.GenerateKeySetID(ref args[0]);
+                                cont = File.ReadAllText(args[1].Replace("\"", ""));
                             }
                             request = userMode.HttpPostByCommandType(cmdType, args[0], cont);
                             ExecuteResponse(request);
                             break;
                         case CommandType.EXIT:
-
+                            //setting lastCommand = true, because we have recieved command
+                            LastCommand = true;
                             CheckLastCommandAndExitApp();
                             break;
                     }
@@ -203,7 +207,7 @@ namespace AADB2C.PolicyAndKeys.Client
             }
 
 
-            var parsArray = pars.Split(' ');
+            var parsArray = Regex.Split(pars, "\\s(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
             parameters = new List<string>(parsArray);
             if ((cmdType == CommandType.UPDATE && parameters.Count != 2) || parameters.Any(string.Empty.Contains))
             {
@@ -237,7 +241,7 @@ namespace AADB2C.PolicyAndKeys.Client
         {
             CheckLastCommandAndExitApp();
             var resources = Enum.GetNames(typeof(ResourceType));
-            Console.WriteLine("Policy and Keyset Client (type exit at any time)");
+            Console.WriteLine("Policy and Keyset Client (ctrl+c to exit at any time)");
             Console.WriteLine("Which resource do you want to execute on {0} or {1}", resources[0], resources[1]);
             Console.Write(":> ");
             var resource = Console.ReadLine().ToUpper();
@@ -310,7 +314,15 @@ namespace AADB2C.PolicyAndKeys.Client
 
             Console.WriteLine(response.Headers);
             string taskContentString = response.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(taskContentString);
+            try
+            {
+                Console.WriteLine(JValue.Parse(taskContentString).ToString(Formatting.Indented));
+            }
+            catch
+            {
+                Console.WriteLine(taskContentString);
+            }
+            
             return taskContentString;
         }
 
@@ -335,6 +347,7 @@ namespace AADB2C.PolicyAndKeys.Client
                 Environment.Exit(0);
 
             }
+            
         }
 
 

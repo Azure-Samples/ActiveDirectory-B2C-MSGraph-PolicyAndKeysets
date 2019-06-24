@@ -17,7 +17,7 @@ namespace AADB2C.PolicyAndKeys.Lib
     public enum CommandType
 
     {
-        EXIT = 0, LIST = 1 , GET = 2, CREATE = 3, UPDATE = 4, DELETE =5, GENERATEKEY = 6, UPLOADSECRET = 7, UPLOADCERTIFICATE = 8, UPLOADPKCS = 9, GETACTIVEKEY = 10, BACKUPKEYSETS = 11 
+        EXIT = 0, LIST = 1 , GET = 2, CREATE = 3, UPDATE = 4, DELETE =5, GENERATEKEY = 6, UPLOADSECRET = 7, UPLOADCERTIFICATE = 8, UPLOADPKCS = 9, GETACTIVEKEY = 10, BACKUPKEYSETS = 11
     }
     public class UserMode
     {
@@ -28,24 +28,24 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         //specific key related APIS
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadSecret {  "use": "sig",  "k": "sdkalsdasdlasdlvasdasdbvlabdlv",  "nbf": "1508969811",  "exp": "1508973711", } 
-        public static string TFKeysetsUploadSecret = "https://graph.microsoft.com/beta/trustframework/keysets/{0}/uploadSecret";
+        public static string TFKeysetsUploadSecret = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/uploadSecret";
 
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadCertificate {  "key": "sdkalsdasdlasdlvasdasdbvlabdlv" }
-        public static string TFKeysetsUploadCertificate = "https://graph.microsoft.com/beta/trustframework/keysets/{0}/uploadCertificate";
+        public static string TFKeysetsUploadCertificate = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/uploadCertificate";
 
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadPkcs12 {  "key": "sdkalsdasdlasdlvasdasdbvlabdlv",   "password": "skdjskdj" } 
-        public static string TFKeysetsUploadPkcs12 = "https://graph.microsoft.com/beta/trustframework/keysets/{0}/uploadPkcs12";
+        public static string TFKeysetsUploadPkcs12 = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/uploadPkcs12";
 
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/generateKey {  "use": "sig",  "kty": "RSA",  "nbf": "1508969811",  "exp": "1508973711", } 
         public static string TFKeysetGenerateKey = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/generateKey";
 
         //GET https://graph.microsoft.com/beta/trustFramework/backupKeySets 
-        public static string TFKeysetBackups = "https://graph.microsoft.com/beta/trustFramework/backupKeySets";
+        public static string TFKeysetBackups = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/backupKeySets";
 
         //GET https://graph.microsoft.com/beta/trustFramework/keySets/{id}/getActiveKey 
-        public static string TFKeysetActiveKey = "https://graph.microsoft.com/beta/trustFramework/getActiveKey";
+        public static string TFKeysetActiveKey = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/getActiveKey";
 
-        
+
         public string TokenForUser { get; private set; }
 
         public UserMode(string token)
@@ -73,7 +73,7 @@ namespace AADB2C.PolicyAndKeys.Lib
         public HttpRequestMessage HttpGetByCommandType(CommandType cmdType, string id)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, TFUri);
-            
+
             switch (cmdType)
             {
                 case CommandType.GETACTIVEKEY:
@@ -84,7 +84,7 @@ namespace AADB2C.PolicyAndKeys.Lib
 
                     break;
             }
-            
+
             AddHeaders(request);
             return request;
         }
@@ -124,18 +124,18 @@ namespace AADB2C.PolicyAndKeys.Lib
                     break;
                 case CommandType.UPLOADSECRET:
                     uri = string.Format(TFKeysetsUploadSecret, id);
-                    
+
                     break;
                 case CommandType.UPLOADPKCS:
                     uri = string.Format(TFKeysetsUploadPkcs12, id);
                     break;
                 case CommandType.UPLOADCERTIFICATE:
                     uri = string.Format(TFKeysetsUploadCertificate, id);
-                    
+
                     break;
             }
 
-            
+
             return HttpPost(uri, content);
         }
         public HttpRequestMessage HttpPost(string uri, string content)
@@ -155,7 +155,7 @@ namespace AADB2C.PolicyAndKeys.Lib
             return request;
         }
 
-         void AddHeaders(HttpRequestMessage requestMessage)
+        void AddHeaders(HttpRequestMessage requestMessage)
         {
             if (TokenForUser == null)
             {
