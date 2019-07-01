@@ -329,8 +329,8 @@ POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/generateKey
 {
 	"use": "sig",
 	"kty": "RSA",
-	"nbf": "1508969811",
-	"exp": "1508973711",
+	"nbf": 1508969811,
+	"exp": 1508973711,
 }
 
 ```
@@ -343,8 +343,8 @@ Content-type: application/json
 	"kid": "lmsdlfmsldlsdsdsd",
 	"use": "sig",
 	"kty": "RSA",
-	"nbf": "1508969811",
-	"exp": "1508973711"
+	"nbf": 1508969811,
+	"exp": 1508973711
 }
 ```
 
