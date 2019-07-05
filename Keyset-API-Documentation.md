@@ -124,7 +124,7 @@ The created trustFrameworkKey.
 
 #### Action uploadCertificate
 
-This action can be used to upload a certificate to a key set.
+This action can be used to upload a certificate to a key set. The 'key' is a base64 encoded representation of the contents of the certificate. 
 
 ##### Parameters
 
@@ -148,7 +148,7 @@ The created trustFrameworkKey.
 
 #### Action uploadPkcs12
 
-This action can be used to upload a PKCS 12 format key (PFX) to a key set.
+This action can be used to upload a PKCS 12 format key (PFX) to a key set.  The 'key' is a base64 encoded representation of the contents of the PFX certificate. 
 
 ##### Parameters
 
@@ -329,8 +329,8 @@ POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/generateKey
 {
 	"use": "sig",
 	"kty": "RSA",
-	"nbf": "1508969811",
-	"exp": "1508973711",
+	"nbf": 1508969811,
+	"exp": 1508973711,
 }
 
 ```
@@ -343,8 +343,8 @@ Content-type: application/json
 	"kid": "lmsdlfmsldlsdsdsd",
 	"use": "sig",
 	"kty": "RSA",
-	"nbf": "1508969811",
-	"exp": "1508973711"
+	"nbf": 1508969811,
+	"exp": 1508973711
 }
 ```
 
@@ -394,8 +394,8 @@ Content-type: application/json
 	"kid": "lmsdlfmsldlsdsdsd",
 	"use": "sig",
 	"kty": "OCT",
-	"nbf": "1508969811",
-	"exp": "1508973711"
+	"nbf": 1508969811,
+	"exp": 1508973711
 }
 ```
 
@@ -419,8 +419,8 @@ Content-type: application/json
 	"kid": "lmsdlfmsldlsdsdsd",
 	"use": "sig",
 	"kty": "OCT",
-	"nbf": "1508969811",
-	"exp": "1508973711"
+	"nbf": 1508969811,
+	"exp": 1508973711
 }
 ```
 
