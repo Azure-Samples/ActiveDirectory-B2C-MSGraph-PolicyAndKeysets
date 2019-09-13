@@ -94,7 +94,7 @@ The created trustFrameworkKey.
 
 #### Action uploadSecret
 
-This action can be used to upload a secret to a key set.
+This action can be used to upload a secret to a key set. Unlike azure portal, the key set needs to exit before this api is called. 
 
 ##### Parameters
 
@@ -124,7 +124,7 @@ The created trustFrameworkKey.
 
 #### Action uploadCertificate
 
-This action can be used to upload a certificate to a key set. The 'key' is a base64 encoded representation of the contents of the certificate. 
+This action can be used to upload a certificate to a key set. The 'key' is a base64 encoded representation of the contents of the certificate. Unlike azure portal, the key set needs to exit before this api is called. 
 
 ##### Parameters
 
@@ -148,7 +148,7 @@ The created trustFrameworkKey.
 
 #### Action uploadPkcs12
 
-This action can be used to upload a PKCS 12 format key (PFX) to a key set.  The 'key' is a base64 encoded representation of the contents of the PFX certificate. 
+This action can be used to upload a PKCS 12 format key (PFX) to a key set.  The 'key' is a base64 encoded representation of the contents of the PFX certificate. Unlike azure portal, the key set needs to exit before this api is called. 
 
 ##### Parameters
 
