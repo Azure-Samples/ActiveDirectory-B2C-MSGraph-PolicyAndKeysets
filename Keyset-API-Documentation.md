@@ -381,7 +381,7 @@ Content-type: application/json
 ```http
 POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadCertificate
 {
-	"key": "sdkalsdasdlasdlvasdasdbvlabdlv"
+	"key": "<base64 encoded value of your cert>"
 }
 
 ```
@@ -405,7 +405,7 @@ Content-type: application/json
 ```http
 POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/uploadPkcs12
 {
-	"key": "sdkalsdasdlasdlvasdasdbvlabdlv",
+	"key": "<base64 encoded value of your pfx>",
   "password": "skdjskdj"
 }
 
