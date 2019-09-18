@@ -281,7 +281,6 @@ PUT https://graph.microsoft.com/beta/trustFramework/keySets/{id}
 Content-type: application/json
 {
 	"keys": [{
-			"kid": "keyId",
 			"use": "sig",
 			"kty": "RSA",
 			"e": "sjdn",
