@@ -10,15 +10,25 @@ namespace AADB2C.PolicyAndKeys.Lib
 {
     public enum ResourceType
     {
-        POLICIES = 1,
-        KEYSETS = 2
+        Policies = 1,
+        KeySets = 2
     }
 
     public enum CommandType
-
     {
-        EXIT = 0, LIST = 1 , GET = 2, CREATE = 3, UPDATE = 4, DELETE =5, GENERATEKEY = 6, UPLOADSECRET = 7, UPLOADCERTIFICATE = 8, UPLOADPKCS = 9, GETACTIVEKEY = 10, BACKUPKEYSETS = 11
+        EXIT = 0, 
+        LIST = 1 , 
+        GET = 2, 
+        CREATE = 3, 
+        UPDATE = 4, 
+        DELETE = 5, 
+        GENERATEKEY = 6, 
+        UPLOADSECRET = 7, 
+        UPLOADCERTIFICATE = 8, 
+        UPLOADPKCS = 9, 
+        GETACTIVEKEY = 10,         
     }
+
     public class UserMode
     {
         static string ContentType = "application/xml";
@@ -39,9 +49,6 @@ namespace AADB2C.PolicyAndKeys.Lib
         //POST https://graph.microsoft.com/beta/trustFramework/keySets/{id}/generateKey {  "use": "sig",  "kty": "RSA",  "nbf": "1508969811",  "exp": "1508973711", } 
         public static string TFKeysetGenerateKey = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/generateKey";
 
-        //GET https://graph.microsoft.com/beta/trustFramework/backupKeySets 
-        public static string TFKeysetBackups = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/backupKeySets";
-
         //GET https://graph.microsoft.com/beta/trustFramework/keySets/{id}/getActiveKey 
         public static string TFKeysetActiveKey = "https://graph.microsoft.com/beta/trustFramework/keySets/{0}/getActiveKey";
 
@@ -53,14 +60,15 @@ namespace AADB2C.PolicyAndKeys.Lib
             TokenForUser = token;
         }
 
-        public void SetResouce(ResourceType resource)
+        public void SetResouce(ResourceType resource, CommandType cmdType)
         {
             resourceType = resource.ToString().ToLower();
             TFUri = $"https://graph.microsoft.com/beta/trustFramework/{resourceType}";
             TFByIDUri = $"https://graph.microsoft.com/beta/trustFramework/{resourceType}/" + "{0}";
-            if (resource == ResourceType.POLICIES)
+            if (resource == ResourceType.Policies && cmdType != CommandType.DELETE)
                 TFByIDUri = TFByIDUri + "/$value";
-            if (resource == ResourceType.KEYSETS)
+
+            if (resource == ResourceType.KeySets)
                 ContentType = "application/json";
         }
         public HttpRequestMessage HttpGet()
@@ -78,11 +86,7 @@ namespace AADB2C.PolicyAndKeys.Lib
             {
                 case CommandType.GETACTIVEKEY:
                     request =  new HttpRequestMessage(HttpMethod.Get, string.Format(TFKeysetActiveKey, id));
-                    break;
-                case CommandType.BACKUPKEYSETS:
-                    request = new HttpRequestMessage(HttpMethod.Get, string.Format(TFKeysetBackups, id));
-
-                    break;
+                    break;                
             }
 
             AddHeaders(request);
