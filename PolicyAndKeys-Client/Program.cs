@@ -25,7 +25,7 @@ namespace AADB2C.PolicyAndKeys.Client
         public static string Tenant = "ENTER_YOUR_TENANT_NAME";
 
         static CommandType cmdType;
-        static ResourceType resType = ResourceType.POLICIES;
+        static ResourceType resType = ResourceType.Policies;
         static UserMode userMode;
 
         public static bool LastCommand { get; private set; }
@@ -57,18 +57,21 @@ namespace AADB2C.PolicyAndKeys.Client
 
                 do
                 {
+                    Console.WriteLine("=========== Custom policy and keyset management demo client. (ctrl+c to exit at any time) ==========");
+
                     //content is the the request body
                     string cont = string.Empty;
                     //last command is only meant to ensure that this is not the first time.
                     LastCommand = false;
                     //Get resource from console
                     resType = ProcessResourceInput();
-                    //set resource for request to be constructed.
-                    userMode.SetResouce(resType);
-                    //Get Command from console
-
-                    cmdType = ProcessCommandInput();
                     
+                    //Get Command from console
+                    cmdType = ProcessCommandInput();
+
+                    //set resource for request to be constructed.
+                    userMode.SetResouce(resType, cmdType);
+
                     //initialize test request
                     testRequests = new TestRequests(userMode, resType, cmdType);
                     switch (cmdType)
@@ -122,7 +125,6 @@ namespace AADB2C.PolicyAndKeys.Client
                             ExecuteResponse(request);
                             break;
 
-                        case CommandType.BACKUPKEYSETS:
                         case CommandType.GETACTIVEKEY:
                             args = ProcessParametersInput();
 
@@ -176,7 +178,6 @@ namespace AADB2C.PolicyAndKeys.Client
                 case CommandType.DELETE:
                 // Delete using "DELETE /trustFrameworkPolicies/{id}"
                 case CommandType.GET:
-                case CommandType.BACKUPKEYSETS:
                 case CommandType.GETACTIVEKEY:
                 case CommandType.GENERATEKEY:
                     // Get a specific policy using "GET /trustFrameworkPolicies/{id}"
@@ -190,10 +191,9 @@ namespace AADB2C.PolicyAndKeys.Client
                 case CommandType.UPDATE:
                 case CommandType.UPLOADCERTIFICATE:
                 case CommandType.UPLOADPKCS:
-                case CommandType.UPLOADSECRET:
-                    // Update using "PUT /trustFrameworkPolicies/{id}" with XML in the body
+                case CommandType.UPLOADSECRET:                    
                     Console.WriteLine($"For Command: {cmdType.ToString()} (space separated) specify Id and path of {resType.ToString()} ");
-                    if (resType != ResourceType.POLICIES) Console.WriteLine("optionally, type test for both, if you want to simply try this out");
+                    if (resType != ResourceType.Policies) Console.WriteLine("optionally, type test for both, if you want to simply try this out");
                     break;
 
             }
@@ -221,7 +221,7 @@ namespace AADB2C.PolicyAndKeys.Client
         {
             CheckLastCommandAndExitApp();
             var commands = Enum.GetNames(typeof(CommandType));
-            Console.WriteLine("Which command do you want to execute on {0} ", string.Join(",", commands));
+            Console.WriteLine("Which command do you want to execute on - {0}. ", string.Join(", ", commands));
             Console.Write(":> ");
             var command = Console.ReadLine().ToUpper();
             if (!commands.Any(command.Contains))
@@ -241,17 +241,17 @@ namespace AADB2C.PolicyAndKeys.Client
         {
             CheckLastCommandAndExitApp();
             var resources = Enum.GetNames(typeof(ResourceType));
-            Console.WriteLine("Policy and Keyset Client (ctrl+c to exit at any time)");
-            Console.WriteLine("Which resource do you want to execute on {0} or {1}", resources[0], resources[1]);
+            Console.WriteLine("Which resource do you want to execute on (enter name below) - {0} or {1}.", resources[0], resources[1]);
             Console.Write(":> ");
             var resource = Console.ReadLine().ToUpper();
-            if (!resources.Any(resource.Contains))
+            if (!resources.Any(r => r.Equals(resource, StringComparison.OrdinalIgnoreCase)))
             {
+                Console.WriteLine("Please enter a valid choice.");
                 ProcessResourceInput();
             }
             else
             {
-                resType = (ResourceType)Enum.Parse(typeof(ResourceType), resource);
+                resType = (ResourceType)Enum.Parse(typeof(ResourceType), resource, true);
             }
 
             return resType;

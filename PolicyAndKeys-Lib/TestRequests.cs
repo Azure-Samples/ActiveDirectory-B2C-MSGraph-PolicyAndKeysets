@@ -18,7 +18,7 @@ namespace AADB2C.PolicyAndKeys.Lib
     {
         public const string TESTPARAMETER = "TEST";
         CommandType cmdType = CommandType.EXIT;
-        ResourceType resType = ResourceType.POLICIES;
+        ResourceType resType = ResourceType.Policies;
         
         public string TestKeysetID = null;
         private UserMode usrMode;
@@ -33,10 +33,9 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         public bool CheckAndGenerateTest(ref string id, ref string content)
         {
-            if (resType == ResourceType.POLICIES)
-
+            if (resType == ResourceType.Policies)
             {
-                Console.WriteLine("Test doesnt work with policies");
+                //Console.WriteLine("Test doesnt work with policies");
                 cmdType = CommandType.EXIT;
                 return false;
             }

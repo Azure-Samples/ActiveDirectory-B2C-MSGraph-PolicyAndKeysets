@@ -1,5 +1,5 @@
 # Programmatic access to Custom Policies and Keysets
-Programmatically access [Custom Policies](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta) and [Keysets](https://github.com/Azure-Samples/ActiveDirectory-B2C-MSGraph-PolicyAndKeysets/blob/master/Keyset-API-Documentation.md) is in Public Preview. 
+Programmatically access [Custom Policies](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta) and [Keysets](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkkeyset?view=graph-rest-beta) is in Public Preview. 
 
 This is a sample command line tool that demonstrates managing custom trust framework policies (custom policy for short) and Policy keys in an Azure AD B2C tenant.  [Custom policy](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-overview-custom) allows you to customize every aspect of the authentication flow. Azure AD B2C uses [Policy keys](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-get-started-custom#create-the-encryption-key) to manage your secrets.
 
@@ -7,12 +7,11 @@ This is a sample command line tool that demonstrates managing custom trust frame
 
 This project framework provides the following features:
 
-* Create, Read, Update and Delete of TrustFramework Policies
-* Create, Read, Update and Delete of KeySets
-* Upload Secret, Certificate and Pkcs12 of Keysets
-* Get Backed up Keysets
-* Generate Key of Keysets
-* Get Active Key in a Keyset
+* Create, read, update and delete of TrustFramework Policies
+* Create, read, update and delete of KeySets
+* Upload secret, certificate and Pkcs12 format policy keys 
+* Generate Key in a keyset
+* Get active key in a keyset
 
 ## Getting Started
 
@@ -22,22 +21,23 @@ This sample requires the following:
 * [Visual Studio](https://www.visualstudio.com/en-us/downloads)
 * [Azure AD B2C tenant](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-get-started)
 
-**NOTE: This API only accepts user tokens, and not application tokens. See more information below about Delegated Permissions.**
-
 ### Installation
 
 #### Create global administrator
 
-* An global administrator account is required to run admin-level operations and to consent to application permissions.  (for example: admin@myb2ctenant.onmicrosoft.com)
+* An global administrator account is required to run admin-level operations and to consent to application permissions.  (for example: admin@myb2ctenant.onmicrosoft.com). 
+* However once the application is consented, a limited role like B2C IEF Policy Administrator or B2C IEF Keyset Administrator will also work. 
 
 #### Register the delegated permissions application
 
-1. Sign in to the [Application Registration Portal](https://apps.dev.microsoft.com/) using your Microsoft account.
-2. Select **Add an app**, and enter a friendly name for the application (such as **Console App for Microsoft Graph (Delegated perms)**). Click **Create**.
-3. On the application registration page, select **Add Platform**. Select the **Native App** tile and save your change. The **delegated permissions** operations in this sample use permissions that are specified in the AuthenticationHelper.cs file. This is why you don't need to assign any permissions to the app on this page.
-4. Open the project PolicyAndKeys-Client and then update App.Config file in Visual Studio with the following. 
-5. Make the **Application Id** value for this app the value of the **ida:ClientId** string.
-6. Update **ida:Tenant** with the name of your tenant.  (for example: myb2ctenantname.onmicrosoft.com)
+1. Sign in to the [Application Registration Portal](https://apps.dev.microsoft.com/) using your Microsoft account. 
+1. You can also use the new app reg portal, please see instructions [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
+1. Please make sure the app has the reply url of this format "msal{ClientId}://auth". Otherwise sample won't work. Its usually a check box if you are using new app reg portal.
+1. Select **Add an app**, and enter a friendly name for the application (such as **Console App for Microsoft Graph (Delegated perms)**). Click **Create**.
+1. On the application registration page, select **Add Platform**. Select the **Native App** tile and save your change. The **delegated permissions** operations in this sample use permissions that are specified in the AuthenticationHelper.cs file. This is why you don't need to assign any permissions to the app on this page.
+1. Open the project PolicyAndKeys-Client and then update App.Config file in Visual Studio with the following. 
+1. Make the **Application Id** value for this app the value of the **ida:ClientId** string.
+1. Update **ida:Tenant** with the name of your tenant.  (for example: myb2ctenantname.onmicrosoft.com)
 
 #### Build and run the sample
 
@@ -53,6 +53,8 @@ This sample requires the following:
 
 Questions about this sample should be posted to [Stack Overflow](https://stackoverflow.com/questions/tagged/azure-ad-b2c). Make sure that your questions or comments are tagged with [azure-ad-b2c].
 
+You can also post a GitHub issue in this repo.
+
 ## Contributing
 
 If you'd like to contribute to this sample, see [CONTRIBUTING.MD](/CONTRIBUTING.md).
@@ -60,7 +62,8 @@ If you'd like to contribute to this sample, see [CONTRIBUTING.MD](/CONTRIBUTING.
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.## Resources
 
 ## Resources
-- [Custom Policies](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta)
+- [Custom Policies Microsoft Graph documentation ](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkpolicy?view=graph-rest-beta)
+- [Keysets Microsoft Graph documentation ](https://docs.microsoft.com/en-us/graph/api/resources/trustframeworkkeyset?view=graph-rest-beta)
 
 The sample uses the Microsoft Authentication Library (MSAL) for authentication. The sample demonstrates both delegated admin permissions.  (app only permissions are not supported yet)
 

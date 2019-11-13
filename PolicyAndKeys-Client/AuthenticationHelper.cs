@@ -14,7 +14,6 @@ namespace AADB2C.PolicyAndKeys.Client
 
         // This API requires "Policy.ReadWrite.TrustFramework" "TrustFrameworkKeySet.ReadWrite.All" permission as an admin-only scope,
         // so authorization will fail if you sign in with a non-admin account.
-        // For now, this API is only accessible on tenants that have been allow listed
         public string[] Scopes = { "User.Read", "Policy.ReadWrite.TrustFramework", "TrustFrameworkKeySet.ReadWrite.All" };
 
         public IPublicClientApplication IdentityClientApp;
