@@ -10,8 +10,8 @@ namespace AADB2C.PolicyAndKeys.Lib
 {
     public enum ResourceType
     {
-        Policies = 1,
-        KeySets = 2
+        policies = 1,
+        keySets = 2
     }
 
     public enum CommandType
@@ -62,13 +62,13 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         public void SetResouce(ResourceType resource, CommandType cmdType)
         {
-            resourceType = resource.ToString().ToLower();
+            resourceType = resource.ToString();
             TFUri = $"https://graph.microsoft.com/beta/trustFramework/{resourceType}";
             TFByIDUri = $"https://graph.microsoft.com/beta/trustFramework/{resourceType}/" + "{0}";
-            if (resource == ResourceType.Policies && cmdType != CommandType.DELETE)
+            if (resource == ResourceType.policies && cmdType != CommandType.DELETE)
                 TFByIDUri = TFByIDUri + "/$value";
 
-            if (resource == ResourceType.KeySets)
+            if (resource == ResourceType.keySets)
                 ContentType = "application/json";
         }
         public HttpRequestMessage HttpGet()
@@ -120,7 +120,7 @@ namespace AADB2C.PolicyAndKeys.Lib
         public HttpRequestMessage HttpPostByCommandType(CommandType cmdType, string id, string content)
         {
             string uri = TFUri;
-
+            
             switch (cmdType)
             {
                 case CommandType.GENERATEKEY:
@@ -128,14 +128,15 @@ namespace AADB2C.PolicyAndKeys.Lib
                     break;
                 case CommandType.UPLOADSECRET:
                     uri = string.Format(TFKeysetsUploadSecret, id);
-
+                    
                     break;
                 case CommandType.UPLOADPKCS:
                     uri = string.Format(TFKeysetsUploadPkcs12, id);
+                    
                     break;
                 case CommandType.UPLOADCERTIFICATE:
                     uri = string.Format(TFKeysetsUploadCertificate, id);
-
+                    
                     break;
             }
 
@@ -169,12 +170,20 @@ namespace AADB2C.PolicyAndKeys.Lib
             try
             {
                 requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", TokenForUser);
+                //requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentType));
+
                 requestMessage.Headers.Add("SampleID", "console-csharp-trustframeworkpolicy");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Could not add headers to HttpRequestMessage: " + ex.Message);
             }
+        }
+
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
         }
 
     }

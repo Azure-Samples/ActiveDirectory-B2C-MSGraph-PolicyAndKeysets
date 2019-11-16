@@ -18,12 +18,12 @@ namespace AADB2C.PolicyAndKeys.Lib
     {
         public const string TESTPARAMETER = "TEST";
         CommandType cmdType = CommandType.EXIT;
-        ResourceType resType = ResourceType.Policies;
-        
+        ResourceType resType = ResourceType.policies;
+
         public string TestKeysetID = null;
         private UserMode usrMode;
 
-        public TestRequests(UserMode userMode, ResourceType resourceType,CommandType commandType)
+        public TestRequests(UserMode userMode, ResourceType resourceType, CommandType commandType)
         {
             usrMode = userMode;
             resType = resourceType;
@@ -33,7 +33,7 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         public bool CheckAndGenerateTest(ref string id, ref string content)
         {
-            if (resType == ResourceType.Policies)
+            if (resType == ResourceType.policies)
             {
                 //Console.WriteLine("Test doesnt work with policies");
                 cmdType = CommandType.EXIT;
@@ -82,14 +82,20 @@ namespace AADB2C.PolicyAndKeys.Lib
             return false;
         }
 
+        private static Random random = new Random();
+        private static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
         private void CheckBeforeCreateTestKeyset()
         {
             if (TestKeysetID == null)
             {
                 var json = Constants.CreateKeyset;
-                var guid = Guid.NewGuid().ToString();
 
-                json = json.Replace(Constants.KEYSETID_TOKEN, guid);
+                json = json.Replace(Constants.KEYSETID_TOKEN, RandomString(8));
                 var req = usrMode.HttpPost(json);
                 var content = ExecuteResponse(req);
 
@@ -99,7 +105,7 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         private static string ExecuteResponse(HttpRequestMessage request)
         {
-            
+
             string content = request.Content.ReadAsStringAsync().Result ?? string.Empty;
             HttpClient httpClient = new HttpClient();
             Task<HttpResponseMessage> responseTask = httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
@@ -117,7 +123,9 @@ namespace AADB2C.PolicyAndKeys.Lib
             return taskContentString;
         }
 
-        private void ReplaceTokens(ref string s)
+       
+
+        public void ReplaceTokens(ref string s)
         {
             var reg = new Regex(@"#\w+#");
             var mc = reg.Matches(s);
@@ -130,8 +138,16 @@ namespace AADB2C.PolicyAndKeys.Lib
 
                     if (matched == Constants.SECRET_TOKEN)
                     {
+                        var guid = Guid.NewGuid().ToString();
+                        if (cmdType == CommandType.UPLOADCERTIFICATE || cmdType == CommandType.UPLOADPKCS)
+                        {
+                            throw new InvalidOperationException("UPLOADCERTIFICATE and UPLOADPKCS is not supported in test mode");
+                        }
+                        else
+                        {
 
-                        s = reg.Replace(s, Guid.NewGuid().ToString(), 1);
+                            s = reg.Replace(s, Guid.NewGuid().ToString(), 1);
+                        }
                     }
                     if (matched == Constants.KEYSETID_TOKEN)
                     {

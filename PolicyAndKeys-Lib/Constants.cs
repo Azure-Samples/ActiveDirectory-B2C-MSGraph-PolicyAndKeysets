@@ -46,7 +46,7 @@ namespace AADB2C.PolicyAndKeys.Lib
 
         public static string UploadCertificate = @"{{  'key': '{0}' }} ";
 
-        public static string UploadPkcs = @"{{  'key': '{0}',   'password': '{0}' }}";
+        public static string UploadPkcs = @"{{  'key': '{0}',   'password': 'password' }}";
 
         static Constants()
         {
