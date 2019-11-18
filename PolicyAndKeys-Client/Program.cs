@@ -133,38 +133,45 @@ namespace AADB2C.PolicyAndKeys.Client
                             break;
 
                         case CommandType.GENERATEKEY:
-                        case CommandType.UPLOADCERTIFICATE:
-                        case CommandType.UPLOADPKCS:
                         case CommandType.UPLOADSECRET:
-
                             args = ProcessParametersInput();
-
-
                             cont = args.Length == 1 ? string.Empty : args[1];
                             if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
                             {
-                                //testRequests.GenerateKeySetID(ref args[0]);
-                                var bytes = File.ReadAllBytes(args[1].Replace("\"", ""));
-                                cont = Convert.ToBase64String(bytes);
-                                string UploadCertificate = @"{{  'key': '{0}' }} ";
+                                testRequests.GenerateKeySetID(ref args[0]);
 
-                                string UploadPkcs = @"{{  'key': '{0}',   'password': 'password' }}";
-                                if (cmdType == CommandType.UPLOADPKCS)
-                                {
-                                    cont = string.Format(UploadPkcs, cont);
-                                }
-                                else if (cmdType == CommandType.UPLOADCERTIFICATE)
-                                {
-                                    cont = string.Format(UploadCertificate, cont);
-                                }
+                            }
+                            request = userMode.HttpPostByCommandType(cmdType, args[0], cont);
+                            ExecuteResponse(request);
+                            break;
+                        case CommandType.UPLOADCERTIFICATE:
+                        case CommandType.UPLOADPKCS:
 
+                            args = ProcessParametersInput();
+                            
+
+                            var bytes = File.ReadAllBytes(args[1].Replace("\"", ""));
+                            var base64EncodedString = Convert.ToBase64String(bytes);
+                            string UploadCertificate = @"{{  'key': '{0}' }} ";
+
+                            string UploadPkcs = @"{{  'key': '{0}',   'password': '{1}' }}";
+                            if (cmdType == CommandType.UPLOADPKCS)
+                            {
+                                cont = string.Format(UploadPkcs, base64EncodedString, args[2]);
+                            }
+                            else if (cmdType == CommandType.UPLOADCERTIFICATE)
+                            {
+                                
+                                cont = string.Format(UploadCertificate, base64EncodedString);
                             }
 
 
 
-                                request = userMode.HttpPostByCommandType(cmdType, args[0], cont);
-                                ExecuteResponse(request);
-                                break;
+
+
+                            request = userMode.HttpPostByCommandType(cmdType, args[0], cont);
+                            ExecuteResponse(request);
+                            break;
                         case CommandType.EXIT:
                             //setting lastCommand = true, because we have recieved command
                             LastCommand = true;
@@ -213,8 +220,10 @@ namespace AADB2C.PolicyAndKeys.Client
                     break;
 
                 case CommandType.UPLOADCERTIFICATE:
+                    Console.WriteLine($"For Command: {cmdType.ToString()} (space separated) specify Id of container and path to cer file");
+                    break;
                 case CommandType.UPLOADPKCS:
-                    Console.WriteLine($"For Command: {cmdType.ToString()} (space separated) specify Id and path to file {resType.ToString()} ");
+                    Console.WriteLine($"For Command: {cmdType.ToString()} (space separated) specify Id of container and path to pfx file and password ");
                     break;
 
             }
@@ -230,7 +239,10 @@ namespace AADB2C.PolicyAndKeys.Client
 
             var parsArray = Regex.Split(pars, "\\s(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
             parameters = new List<string>(parsArray);
-            if ((cmdType == CommandType.UPDATE && parameters.Count != 2) || parameters.Any(string.Empty.Contains))
+            if ((cmdType == CommandType.UPDATE && parameters.Count != 2) ||
+                (cmdType == CommandType.UPLOADCERTIFICATE && parameters.Count != 2) ||
+                (cmdType == CommandType.UPLOADPKCS && parameters.Count != 3) || 
+                parameters.Any(string.Empty.Contains))
             {
                 ProcessParametersInput();
             }
