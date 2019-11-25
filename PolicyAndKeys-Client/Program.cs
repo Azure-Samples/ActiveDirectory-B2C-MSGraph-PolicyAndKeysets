@@ -166,7 +166,11 @@ namespace AADB2C.PolicyAndKeys.Client
                             }
 
 
+                            if (!testRequests.CheckAndGenerateTest(ref args[0], ref cont))
+                            {
+                                testRequests.GenerateKeySetID(ref args[0]);
 
+                            }
 
 
                             request = userMode.HttpPostByCommandType(cmdType, args[0], cont);
